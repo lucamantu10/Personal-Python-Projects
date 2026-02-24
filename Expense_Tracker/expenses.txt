@@ -1,1 +1,0 @@
-food 10.0 burger

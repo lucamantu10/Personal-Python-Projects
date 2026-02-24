@@ -20,7 +20,7 @@ def get_amount():
 
 
 def save_expense(amount, category, description):
-    with open("expenses.txt", "a") as file:
+    with open("data/expenses.txt", "a") as file:
         line = f"{category} {amount} {description}\n"
         file.write(line)
 

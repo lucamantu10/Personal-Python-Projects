@@ -1,0 +1,2 @@
+food 10.0 burger
+food 20.0 shaorma
