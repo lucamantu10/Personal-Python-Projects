@@ -1,2 +1,2 @@
-food 10.0 burger
-food 20.0 shaorma
+ 30.0 haine tricou
+ 20.0 food Mc

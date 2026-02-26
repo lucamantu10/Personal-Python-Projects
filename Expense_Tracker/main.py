@@ -2,6 +2,7 @@ def show_menu():
     print("\n===== EXPENSE TRACKER =====\n")
     print("1) Add expense")
     print("2) List expenses")
+    print("3) Show total: ")
     print("0) Exit")
 
 def get_amount():
@@ -21,7 +22,7 @@ def get_amount():
 
 def save_expense(amount, category, description):
     with open("data/expenses.txt", "a") as file:
-        line = f"{category} {amount} {description}\n"
+        line = f" {amount} {category} {description}\n"
         file.write(line)
 
 
@@ -32,6 +33,62 @@ def add_expense():
 
     save_expense(amount, category, description)
     print("Expense saved successfully!")
+
+def load_expenses():
+    expenses = []
+
+    try:
+        with open("data/expenses.txt", "r") as file:
+            for line in file:
+                line = line.strip()
+
+                if line == "":
+                    continue
+
+                parts = line.split(" ")
+
+                if len(parts) != 3:
+                    print(f"Skipping invalid line: {line}")
+                    continue
+
+                amount_str, category, description = parts
+
+                try:
+                    amount = float(amount_str)
+                except ValueError:
+                    print(f"Skipping invalid amount: {amount_str}")
+                    continue
+
+                expenses.append([amount, category, description])
+    except FileNotFoundError:
+        return[]
+
+    return expenses
+
+
+def list_expenses():
+    expenses = load_expenses()
+
+    if len(expenses) == 0:
+        print("No expenses saved!")
+        return
+
+    print("\n---- Your Expenses ----")
+    for amount, category, description in expenses:
+        print(f"{amount:.2f} | {category:<10} | {description}")
+
+def show_total():
+    expenses = load_expenses()
+
+    if len(expenses) == 0:
+        print("No expenses saved!")
+        return
+
+    total = 0
+
+    for amount, category, description in expenses:
+        total += amount
+    print(f"Total amount spent: {total:.2f}")
 
 
 def main():
@@ -45,7 +102,9 @@ def main():
         if choice == 1:
             add_expense()
         elif choice == 2:
-            print("List expenses!")
+            list_expenses()
+        elif choice == 3:
+            show_total()
         elif choice == 0:
             print("Goodbye!")
             break
