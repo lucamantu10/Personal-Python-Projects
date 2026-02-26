@@ -91,6 +91,19 @@ def show_total():
     print(f"Total amount spent: {total:.2f}")
 
 
+def reset_expenses():
+    confirm = input("Are you sure you want to erase ALL data? (Yes/No)").strip().lower()
+    if confirm != "Yes":
+        print("Canceled!")
+        return
+
+    with open("data/expenses.txt", "w") as file:
+        pass
+
+print("Expense erased!")
+
+
+
 def main():
     while True:
         show_menu()
