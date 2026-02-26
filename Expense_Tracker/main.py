@@ -1,8 +1,13 @@
+EXPENSES_FILE = "data/expenses.txt"
+SUMMARY_FILE = "data/monthly_summary.csv"
+
 def show_menu():
     print("\n===== EXPENSE TRACKER =====\n")
     print("1) Add expense")
     print("2) List expenses")
-    print("3) Show total: ")
+    print("3) Show total spent this month")
+    print("4) Reset expenses")
+    print("5) Close month")
     print("0) Exit")
 
 def get_amount():
@@ -21,7 +26,7 @@ def get_amount():
 
 
 def save_expense(amount, category, description):
-    with open("data/expenses.txt", "a") as file:
+    with open(EXPENSES_FILE, "a") as file:
         line = f" {amount} {category} {description}\n"
         file.write(line)
 
@@ -38,7 +43,7 @@ def load_expenses():
     expenses = []
 
     try:
-        with open("data/expenses.txt", "r") as file:
+        with open(EXPENSES_FILE, "r") as file:
             for line in file:
                 line = line.strip()
 
@@ -90,18 +95,56 @@ def show_total():
         total += amount
     print(f"Total amount spent: {total:.2f}")
 
-
 def reset_expenses():
-    confirm = input("Are you sure you want to erase ALL data? (Yes/No)").strip().lower()
-    if confirm != "Yes":
-        print("Canceled!")
+    confirm = input("Erase ALL current expenses? (yes/no): ").strip().lower()
+    if confirm != "yes":
+        print("Cancelled.")
         return
 
-    with open("data/expenses.txt", "w") as file:
+    with open(EXPENSES_FILE, "w") as file:
         pass
 
-print("Expense erased!")
+    print("Current expenses cleared.")
 
+
+def totals_by_category(expenses):
+    totals = {}
+
+    for amount, category, description in expenses:
+        if category not in totals:
+            totals[category] = 0.0
+            totals[category] += amount
+    return totals
+
+
+def close_month():
+    expenses = load_expenses()
+
+    if len(expenses) == 0:
+        print("No expenses saved!")
+        return
+
+    month = input("Enter month (MM-YYYY): ").strip()
+
+    total = 0.0
+    for amount, category, description in expenses:
+        total += amount
+
+    cat_totals = totals_by_category(expenses)
+
+    # scriem în SUMMARY_FILE (nu în expenses)
+    with open(SUMMARY_FILE, "a") as file:
+        for category, cat_total in cat_totals.items():
+            file.write(f"{month},{category},{cat_total:.2f}\n")
+
+        file.write(f"{month},__TOTAL__,{total:.2f}\n")
+
+    print("Month archived to monthly_summary.csv")
+
+    with open(EXPENSES_FILE, "w") as file:
+        pass
+
+    print("Current expenses cleared for new month.")
 
 
 def main():
@@ -118,6 +161,10 @@ def main():
             list_expenses()
         elif choice == 3:
             show_total()
+        elif choice == 4:
+            reset_expenses()
+        elif choice == 5:
+            close_month()
         elif choice == 0:
             print("Goodbye!")
             break
